@@ -3,37 +3,24 @@ Tool to test dgemm performance using hipblas
 
 # How to build 
 
-`hipcc -L/opt/rocm-X.X.Y/lib -lhipblas performance.cpp`
+```
+git clone git@github.com:JorgeG94/calum_performance_tool.git
+mkdir build 
+cd build
+cmake ../
+make 
+```
 
 # How to execute 
 
-`./a.out 36000 14400 36000 10 N N` 
+`./performance 36000 14400 36000 10 N N 10` 
 
 The N N represents the type of blas operation to do in the input matrices, so a comprehensive test would be:
 
 ```
-./a.out 36000 14400 36000 10 N N
-./a.out 36000 14400 36000 10 N T
-./a.out 36000 14400 36000 10 T N 
-./a.out 36000 14400 36000 10 T T 
+./a.out 36000 14400 36000 10 N N 10 
+./a.out 36000 14400 36000 10 N T 10 
+./a.out 36000 14400 36000 10 T N 10
+./a.out 36000 14400 36000 10 T T 10
 ```
 
-Performance observed with different rocm versions: 
-
-```
-crusher170:~/crusher_dev/marco_exess> hipcc -L/opt/rocm-5.1.0/lib -lhipblas calum_performance.cpp
-crusher170:~/crusher_dev/marco_exess> ./a.out 36000 14400 36000 10 T T
-Performing 10 repetitions of 36000 14400 36000
-Time     134714254us
-GFLOP/s: 2770.66
-crusher170:~/crusher_dev/marco_exess> hipcc -L/opt/rocm-5.2.0/lib -lhipblas calum_performance.cpp
-crusher170:~/crusher_dev/marco_exess> ./a.out 36000 14400 36000 10 T T
-Performing 10 repetitions of 36000 14400 36000
-Time     134716222us
-GFLOP/s: 2770.62
-crusher170:~/crusher_dev/marco_exess> hipcc -L/opt/rocm-5.3.0/lib -lhipblas calum_performance.cpp
-crusher170:~/crusher_dev/marco_exess> ./a.out 36000 14400 36000 10 T T
-Performing 10 repetitions of 36000 14400 36000
-Time     9947263us
-GFLOP/s: 37522.7
-```
