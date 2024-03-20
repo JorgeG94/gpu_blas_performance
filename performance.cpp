@@ -1,8 +1,9 @@
 #include <cstdlib>
+#include <stdlib.h>
+#include <time.h>
 #include <iostream>
 #include <hip/hip_runtime.h>
-#include <hip/hip_runtime.h>
-#include <hipblas.h>
+#include <hipblas/hipblas.h>
 #include <chrono>
 // originally designed and programmed for nvidia gpus
 // by Calum Snowdon at the Australian National Univesrity 
@@ -15,7 +16,7 @@ int main(int argc, char *argv[]) {
 
   // Parse args
   if (argc != 7) {
-    std::cout << "Need 6 arguments: m k n reps [T|N] [T|N]" << std::endl;
+    std::cout << "Need 7 arguments: m k n reps [T|N] [T|N] reps_of_reps" << std::endl;
     exit(1);
   }
 
@@ -23,6 +24,7 @@ int main(int argc, char *argv[]) {
   const int k = atoi(argv[2]);
   const int n = atoi(argv[3]);
   const int reps = atoi(argv[4]);
+const int reps_of_reps = atoi(argv[7]);
 
   hipblasOperation_t op1;
   hipblasOperation_t op2;
@@ -45,11 +47,11 @@ int main(int argc, char *argv[]) {
   double *HA, *HB;
   hipHostMalloc((void**)&HA, m*k*sizeof(double));
   hipHostMalloc((void**) &HB, k*n*sizeof(double));
-
+srand(time(NULL));
   for (int i=0; i<m*k; i++)
-    HA[i] = ((double) i);
+    HA[i] = ((double)rand() / RAND_MAX);
   for (int i=0; i<k*n; i++)
-    HB[i] = ((double) i);
+    HB[i] = ( (double)rand() / RAND_MAX);
 
   double alpha = 1.0;
   double beta = 0.0;
@@ -77,6 +79,7 @@ int main(int argc, char *argv[]) {
   // Do the computation: schedule [reps] dgemm's using the same buffers 
   // and stream, then synchronize.
   std::cout << "Performing " << reps << " repetitions of " << m << "*" << k << " by " << k << "*" << n << std::endl;
+	for(int j = 0; j < reps_of_reps; ++j){
   auto start = high_resolution_clock::now();
   for (int i=0; i<reps; i++) {
     status = hipblasDgemm(handle, op1, op2, m, n, k,
@@ -90,6 +93,7 @@ int main(int argc, char *argv[]) {
 
   auto duration = duration_cast<microseconds>(end-start);
   std::cout << "Time     " << duration.count() << "us" << std::endl;
-  std::cout << "GFLOP/s: " << ((double)2*m*k*n*reps)/((double)duration.count())/1000 << std::endl;;
+  std::cout << "GFLOP/s: " << ((double)2*m*k*n*reps)/((double)duration.count())/1000 << " in iter " << j << std::endl;
+}
   return 0;
 }
