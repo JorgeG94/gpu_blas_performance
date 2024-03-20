@@ -17,14 +17,14 @@
 #define hipHostMalloc cudaMallocHost
 #define hipStream_t cudaStream_t
 #define hipStreamCreate cudaStreamCreate
-#define hipblasHandle_t cublaHandle_t
+#define hipblasHandle_t cublasHandle_t
 #define hipblasStatus_t cublasStatus_t 
 #define hipblasCreate cublasCreate
 #define hipblasSetStream cublasSetStream
 #define hipMemcpy cudaMemcpy
 #define hipMemcpyHostToDevice cudaMemcpyHostToDevice
 #define hipblasDgemm cublasDgemm
-#define HIPBLAS_STATUS_SUCESS CUBLAS_STATUS_SUCESS
+#define HIPBLAS_STATUS_SUCCESS CUBLAS_STATUS_SUCCESS
 #define hipDeviceSynchronize cudaDeviceSynchronize
 #endif 
 #include <chrono>
