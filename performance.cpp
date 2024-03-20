@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   using namespace std::chrono;
 
   // Parse args
-  if (argc != 7) {
+  if (argc != 8) {
     std::cout << "Need 7 arguments: m k n reps [T|N] [T|N] reps_of_reps" << std::endl;
     exit(1);
   }
