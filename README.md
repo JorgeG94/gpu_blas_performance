@@ -11,6 +11,10 @@ cmake ../
 make 
 ```
 
+## Use magma 
+
+`cmake -DUSE_MAGMA=True ../`
+
 # How to execute 
 
 `./performance 36000 14400 36000 10 N N 10` 

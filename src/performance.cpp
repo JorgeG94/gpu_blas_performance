@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   const int k = atoi(argv[2]);
   const int n = atoi(argv[3]);
   const int reps = atoi(argv[4]);
-const int reps_of_reps = atoi(argv[7]);
+	const int reps_of_reps = atoi(argv[7]);
 
   hipblasOperation_t op1;
   hipblasOperation_t op2;
@@ -70,17 +70,27 @@ const int reps_of_reps = atoi(argv[7]);
   hipblasCreate(&handle);
   hipblasSetStream(handle,s);
 
+	#ifdef HAVE_MAGMA
+		magma_init();
+    magma_queue_t queue = NULL;
+    int device = 0; // Assuming a single-GPU system here, device ID 0
+    magma_queue_create(device, &queue);
+	#endif
   hipMemcpy(A,HA,m*k*sizeof(double),hipMemcpyHostToDevice);
   hipMemcpy(B,HB,n*k*sizeof(double),hipMemcpyHostToDevice);
 
   // Initial call to isolate library initialization/first call overhead
   int lda = (op1 == HIPBLAS_OP_N) ? m : k;
   int ldb = (op2 == HIPBLAS_OP_N) ? k : n;
+#ifdef HAVE_MAGMA
+	magma_dgemm(op1, op2, m, n, k, alpha, A, lda, B, ldb, beta, C, m, queue);
+#else
   status = hipblasDgemm(handle, op1, op2, m, n, k,
                        &alpha, A, lda, B, ldb, &beta, C, m);
   if (status != HIPBLAS_STATUS_SUCCESS) {
     std::cout << "It borke" << std::endl;
   }
+#endif
   hipDeviceSynchronize();
 
   // Do the computation: schedule [reps] dgemm's using the same buffers 
@@ -90,11 +100,15 @@ std::cout << std::left << std::setw(12) << "Time (us)" << std::setw(12) << "GFLO
 	for(int j = 0; j < reps_of_reps; ++j){
   auto start = high_resolution_clock::now();
   for (int i=0; i<reps; i++) {
+#ifdef HAVE_MAGMA
+	magma_dgemm(op1, op2, m, n, k, alpha, A, lda, B, ldb, beta, C, m, queue);
+#else
     status = hipblasDgemm(handle, op1, op2, m, n, k,
                           &alpha, A, lda, B, ldb, &beta, C, m);
     if (status != HIPBLAS_STATUS_SUCCESS) {
       std::cout << "It borke" << std::endl;
     }
+#endif
   }
   hipDeviceSynchronize();
   auto end = high_resolution_clock::now();
@@ -106,5 +120,15 @@ std::cout << std::left << std::setw(12) << "Time (us)" << std::setw(12) << "GFLO
               << std::setw(12) << std::setprecision(6) << gflops
               << std::setw(4) << j << std::endl;
 }
+
+	hipFree(A);
+	hipFree(B);
+	hipFree(C);
+	hipHostFree(HA);
+	hipHostFree(HB);
+#ifdef HAVE_MAGMA
+    magma_queue_destroy(queue);
+    magma_finalize();
+#endif
   return 0;
 }

@@ -22,3 +22,10 @@
 #define HIPBLAS_STATUS_SUCCESS CUBLAS_STATUS_SUCCESS
 #define hipDeviceSynchronize cudaDeviceSynchronize
 #endif 
+
+#ifdef HAVE_MAGMA
+#include <magma_v2.h>
+#define hipblasOperation_t magma_trans_t
+#define HIPBLAS_OP_T MagmaTrans
+#define HIPBLAS_OP_N MagmaNoTrans
+#endif
