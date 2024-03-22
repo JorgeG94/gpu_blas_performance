@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     std::cout << "             / _)\n";
     std::cout << "    _.----._/ /\n";
     std::cout << "  /          /\n";
-    std::cout << "__/ (  | (  |\n";
+    std::cout << " _/ (  | (  |\n";
     std::cout << "/__.-'|_|--|_|\n";
 
   // Parse args
