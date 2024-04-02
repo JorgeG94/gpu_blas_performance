@@ -11,6 +11,7 @@
 // Please reference Calum when using this tool and using its 
 // results 
 
+
 int main(int argc, char *argv[]) {
   using namespace std::chrono;
 
@@ -48,12 +49,12 @@ int main(int argc, char *argv[]) {
 
   // Allocate/initialize memory and handles and such
   double *A, *B, *C;
-  hipMalloc((void**) &A, m*k*sizeof(double));
-  hipMalloc((void**) &B, k*n*sizeof(double));
-  hipMalloc((void**) &C, m*n*sizeof(double));
+  hipAssert(hipMalloc((void**) &A, m*k*sizeof(double)));
+  hipAssert(hipMalloc((void**) &B, k*n*sizeof(double)));
+  hipAssert(hipMalloc((void**) &C, m*n*sizeof(double)));
   double *HA, *HB;
-  hipHostMalloc((void**)&HA, m*k*sizeof(double));
-  hipHostMalloc((void**) &HB, k*n*sizeof(double));
+  hipAssert(hipHostMalloc((void**)&HA, m*k*sizeof(double)));
+  hipAssert(hipHostMalloc((void**) &HB, k*n*sizeof(double)));
 	srand(time(NULL));
   for (int i=0; i<m*k; i++)
     HA[i] = ((double)rand() / RAND_MAX);
@@ -63,7 +64,7 @@ int main(int argc, char *argv[]) {
   double alpha = 1.0;
   double beta = 0.0;
   hipStream_t s;
-  hipStreamCreate(&s);
+  hipAssert(hipStreamCreate(&s));
 
   hipblasHandle_t handle;
   hipblasStatus_t status;
@@ -76,8 +77,8 @@ int main(int argc, char *argv[]) {
     int device = 0; // Assuming a single-GPU system here, device ID 0
     magma_queue_create(device, &queue);
 	#endif
-  hipMemcpy(A,HA,m*k*sizeof(double),hipMemcpyHostToDevice);
-  hipMemcpy(B,HB,n*k*sizeof(double),hipMemcpyHostToDevice);
+  hipAssert(hipMemcpy(A,HA,m*k*sizeof(double),hipMemcpyHostToDevice));
+  hipAssert(hipMemcpy(B,HB,n*k*sizeof(double),hipMemcpyHostToDevice));
 
   // Initial call to isolate library initialization/first call overhead
   int lda = (op1 == HIPBLAS_OP_N) ? m : k;
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) {
     std::cout << "It borke" << std::endl;
   }
 #endif
-  hipDeviceSynchronize();
+  hipAssert(hipDeviceSynchronize());
 
   // Do the computation: schedule [reps] dgemm's using the same buffers 
   // and stream, then synchronize.
@@ -110,7 +111,7 @@ std::cout << std::left << std::setw(12) << "Time (us)" << std::setw(12) << "GFLO
     }
 #endif
   }
-  hipDeviceSynchronize();
+  hipAssert(hipDeviceSynchronize());
   auto end = high_resolution_clock::now();
 
   auto duration = duration_cast<microseconds>(end-start);
@@ -121,11 +122,11 @@ std::cout << std::left << std::setw(12) << "Time (us)" << std::setw(12) << "GFLO
               << std::setw(4) << j << std::endl;
 }
 
-	hipFree(A);
-	hipFree(B);
-	hipFree(C);
-	hipHostFree(HA);
-	hipHostFree(HB);
+	hipAssert(hipFree(A));
+	hipAssert(hipFree(B));
+	hipAssert(hipFree(C));
+	hipAssert(hipHostFree(HA));
+	hipAssert(hipHostFree(HB));
 #ifdef HAVE_MAGMA
     magma_queue_destroy(queue);
     magma_finalize();

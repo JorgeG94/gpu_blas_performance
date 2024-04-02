@@ -1,3 +1,4 @@
+
 #ifdef HAVE_HIP
 #include <hip/hip_runtime.h>
 #include <hipblas/hipblas.h>
@@ -9,7 +10,9 @@
 #define HIPBLAS_OP_T CUBLAS_OP_T
 #define HIPBLAS_OP_N CUBLAS_OP_N
 #define hipMalloc cudaMalloc
+#define hipFree cudaFree
 #define hipHostMalloc cudaMallocHost
+#define hipHostFree cudaFreeHost
 #define hipStream_t cudaStream_t
 #define hipStreamCreate cudaStreamCreate
 #define hipblasHandle_t cublasHandle_t
@@ -21,8 +24,19 @@
 #define hipblasDgemm cublasDgemm
 #define HIPBLAS_STATUS_SUCCESS CUBLAS_STATUS_SUCCESS
 #define hipDeviceSynchronize cudaDeviceSynchronize
+#define hipError_t cudaError_t
+#define hipSuccess cudaSuccess
+#define hipGetErrorString cudaGetErrorString
 #endif 
 
+#define hipAssert(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+
+inline void gpuAssert(hipError_t code, const char *file, int line, bool abort=true) {
+    if (code != hipSuccess) {
+        fprintf(stderr,"GPUassert: %s %s %d\n", hipGetErrorString(code), file, line);
+        if (abort) exit(code);
+    }
+}
 #ifdef HAVE_MAGMA
 #include <magma_v2.h>
 #define hipblasOperation_t magma_trans_t
