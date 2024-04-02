@@ -10,7 +10,9 @@
 #define HIPBLAS_OP_T CUBLAS_OP_T
 #define HIPBLAS_OP_N CUBLAS_OP_N
 #define hipMalloc cudaMalloc
+#define hipFree cudaFree
 #define hipHostMalloc cudaMallocHost
+#define hipHostFree cudaFreeHost
 #define hipStream_t cudaStream_t
 #define hipStreamCreate cudaStreamCreate
 #define hipblasHandle_t cublasHandle_t
