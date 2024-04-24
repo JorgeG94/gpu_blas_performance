@@ -28,7 +28,7 @@ enable_language(HIP)
   set_source_files_properties(
     ${SOURCES} PROPERTIES LANGUAGE HIP)
 else()
-  set(GPU_LIBRARIES CUDA::cudart CUDA::cublas)
+  set(GPU_LIBRARIES CUDA::cudart CUDA::cublas CUDA::cusolver)
   add_definitions(-DHAVE_CUDA)
 endif()
 message("GPU LIBS " ${GPU_LIBRARIES})

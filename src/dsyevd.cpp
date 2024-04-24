@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
   hipAssert(hipMalloc( (void**) &work, sizeof(double) * lwork));
   hipsolverDsyevd(handle, HIPSOLVER_EIG_MODE_VECTOR, HIPSOLVER_FILL_MODE_LOWER,
                   m, A, n, w, work, lwork, info);
+
   if (status != HIPSOLVER_STATUS_SUCCESS) {
     std::cout << "It borke" << std::endl;
   }

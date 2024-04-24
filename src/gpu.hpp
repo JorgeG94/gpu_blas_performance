@@ -7,6 +7,16 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
+#include <cusolverDn.h>
+#define hipsolverHandle_t cusolverDnHandle_t
+#define hipsolverDnCreate cusolverDnCreate
+#define hipsolverDnSetStream cusolverDnSetStream
+#define hipsolverStatus_t cusolverStatus_t
+#define HIPSOLVER_EIG_MODE_VECTOR CUSOLVER_EIG_MODE_VECTOR
+#define HIPSOLVER_FILL_MODE_LOWER CUBLAS_FILL_MODE_LOWER
+#define hipsolverDsyevd_bufferSize cusolverDnDsyevd_bufferSize
+#define hipsolverDsyevd cusolverDnDsyevd
+#define HIPSOLVER_STATUS_SUCCESS CUSOLVER_STATUS_SUCCESS
 #define hipblasOperation_t cublasOperation_t
 #define HIPBLAS_OP_T CUBLAS_OP_T
 #define HIPBLAS_OP_N CUBLAS_OP_N
