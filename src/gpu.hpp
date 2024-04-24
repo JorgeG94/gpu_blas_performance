@@ -2,6 +2,7 @@
 #ifdef HAVE_HIP
 #include <hip/hip_runtime.h>
 #include <hipblas/hipblas.h>
+#include <hipsolver/hipsolver.h>
 #elif HAVE_CUDA
 #include <cuda.h>
 #include <cuda_runtime.h>

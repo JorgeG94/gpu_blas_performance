@@ -38,14 +38,14 @@ int main(int argc, char *argv[]) {
   double *A, *w, *work;
   hipAssert(hipMalloc((void**) &A, m*n*sizeof(double)));
   hipAssert(hipMalloc((void**) &w, n*sizeof(double)));
-  int* devInfo =nullptr;
-  hipAssert(hipMalloc((void**)&devInfo, sizeof(int)));
+  int* info =nullptr;
+  hipAssert(hipMalloc((void**)&info, sizeof(int)));
   double *HA, *Hw;
   hipAssert(hipHostMalloc((void**)&HA, m*n*sizeof(double)));
   hipAssert(hipHostMalloc((void**) &Hw, n*sizeof(double)));
 
 	srand(time(NULL));
-  for (int i=0; i<m*k; i++)
+  for (int i=0; i<m*n; i++)
     HA[i] = ((double)rand() / RAND_MAX);
 
   hipStream_t s;
@@ -53,17 +53,17 @@ int main(int argc, char *argv[]) {
 
   hipsolverHandle_t handle;
   hipsolverDnCreate(&handle);
-  hipsolverDnSetStream(handle, stream);
-  hipsolver_status = status;
+  hipsolverDnSetStream(handle, s);
+  hipsolverStatus_t status;
 
   hipAssert(hipMemcpy(A,HA,m*n*sizeof(double),hipMemcpyHostToDevice));
 
   // Initial call to isolate library initialization/first call overhead
    int lwork = 0;
-  status = hipsolverDsyevd_bufferSize(handle, HIPSOLVER_EIG_MODE_VECTOR, HIPSOLVER_FILL_LOWER,
+  status = hipsolverDsyevd_bufferSize(handle, HIPSOLVER_EIG_MODE_VECTOR, HIPSOLVER_FILL_MODE_LOWER,
                   m, A, n, w, &lwork);
-  hipMalloc( (void**) &work, sizeof(double) * lwork);
-  hipsolverDsyevd(handle, HIPSOLVER_EIG_MODE_VECTOR, HIPSOLVER_FILL_LOWER,
+  hipAssert(hipMalloc( (void**) &work, sizeof(double) * lwork));
+  hipsolverDsyevd(handle, HIPSOLVER_EIG_MODE_VECTOR, HIPSOLVER_FILL_MODE_LOWER,
                   m, A, n, w, work, lwork, info);
   if (status != HIPSOLVER_STATUS_SUCCESS) {
     std::cout << "It borke" << std::endl;
@@ -77,10 +77,9 @@ std::cout << std::left << std::setw(12) << "Time (us)" << std::setw(12) << "GFLO
 	for(int j = 0; j < reps_of_reps; ++j){
   auto start = high_resolution_clock::now();
   for (int i=0; i<reps; i++) {
-  hipsolverDsyevd(handle, HIPSOLVER_EIG_MODE_VECTOR, HIPSOLVER_FILL_LOWER,
+  hipsolverDsyevd(handle, HIPSOLVER_EIG_MODE_VECTOR, HIPSOLVER_FILL_MODE_LOWER,
                   m, A, n, w, work, lwork, info);
     }
-  }
   hipAssert(hipDeviceSynchronize());
   auto end = high_resolution_clock::now();
 
