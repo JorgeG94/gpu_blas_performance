@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
   // Do the computation: schedule [reps] dgemm's using the same buffers 
   // and stream, then synchronize.
   std::cout << "Performing " << reps << " repetitions of " << m << "*" << n << " " << reps_of_reps << " times " << std::endl;
-std::cout << std::left << std::setw(12) << "Time (us)" << std::setw(12) << "GFLOP/s" << std::setw(4) << "Rep" << std::endl;
+std::cout << std::left << std::setw(12) << "Time (ms)" << std::setw(4) << "Rep" << std::endl;
 	for(int j = 0; j < reps_of_reps; ++j){
   auto start = high_resolution_clock::now();
   for (int i=0; i<reps; i++) {
@@ -85,10 +85,8 @@ std::cout << std::left << std::setw(12) << "Time (us)" << std::setw(12) << "GFLO
   auto end = high_resolution_clock::now();
 
   auto duration = duration_cast<microseconds>(end-start);
-    double gflops = ((double)2 * m * n * reps) / duration.count() / 1000;
 
-    std::cout << std::left << std::setw(12) << duration.count()
-              << std::setw(12) << std::setprecision(6) << gflops
+    std::cout << std::left << std::setw(12) << duration.count() / 1000
               << std::setw(4) << j << std::endl;
 }
 
