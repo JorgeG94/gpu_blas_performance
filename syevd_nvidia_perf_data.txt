@@ -1,0 +1,19 @@
+
+SYEVD of a 10 x 10 matrix:
+- 165 us, run as `./dsyevd 10 10 1 1`
+SYEVD of a 100 x 100 matrix:
+- 1786 us, run as `./dsyevd 100 100 1 1`
+SYEVD of a 400 x 400 matrix:
+- 5655 us, run as `./dsyevd 400 400 1 1`
+SYEVD of a 600 x 600 matrix:
+- 9304 us, run as `./dsyevd 600 600 1 1`
+SYEVD of a 1000 x 1000 matrix:
+- 17495 us, run as `./dsyevd 1000 1000 1 1`
+SYEVD of a 5000 x 5000 matrix:
+- 593122 us, run as `./dsyevd 5000 5000 1 1`
+
+
+
+
+## Performance of 1000x1000 DSYEVD on AMD 
+454 seconds on one MI250x rocm/5.4.3
