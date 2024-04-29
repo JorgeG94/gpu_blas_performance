@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
   // Do the computation: schedule [reps] dgemm's using the same buffers 
   // and stream, then synchronize.
   std::cout << "Performing " << reps << " repetitions of " << m << "*" << n << " " << reps_of_reps << " times " << std::endl;
-std::cout << std::left << std::setw(12) << "Time (ms)" << std::setw(4) << "Rep" << std::endl;
+std::cout << std::left << std::setw(12) << "Time (us)" << std::setw(4) << "Rep" << std::endl;
 	for(int j = 0; j < reps_of_reps; ++j){
   auto start = high_resolution_clock::now();
   for (int i=0; i<reps; i++) {
@@ -85,9 +85,15 @@ std::cout << std::left << std::setw(12) << "Time (ms)" << std::setw(4) << "Rep" 
   auto end = high_resolution_clock::now();
 
   auto duration = duration_cast<microseconds>(end-start);
+  
 
-    std::cout << std::left << std::setw(12) << duration.count() / 1000
-              << std::setw(4) << j << std::endl;
+    std::cout << std::left << std::setw(12) << duration.count()
+              << std::setw(4) << j;
+    if(duration.count() / 1000 > 20 && m >= 100){
+    	std::cout << " TOO SLOW " << std::endl;
+    }else{
+    	std::cout << "Yay it's fast now!" << std::endl;
+    }
 }
 
 	hipAssert(hipFree(A));
