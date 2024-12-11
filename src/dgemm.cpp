@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <mpi.h>
+#include <omp.h>
 #include <iomanip>
 #include <stdlib.h>
 #include <time.h>
