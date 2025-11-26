@@ -33,6 +33,7 @@
 #define hipMemcpy cudaMemcpy
 #define hipMemcpyHostToDevice cudaMemcpyHostToDevice
 #define hipblasDgemm cublasDgemm
+#define hipblasSgemm cublasSgemm
 #define HIPBLAS_STATUS_SUCCESS CUBLAS_STATUS_SUCCESS
 #define hipDeviceSynchronize cudaDeviceSynchronize
 #define hipError_t cudaError_t

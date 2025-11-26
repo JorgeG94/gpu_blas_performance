@@ -35,6 +35,8 @@ message("GPU LIBS " ${GPU_LIBRARIES})
 
 
 add_executable(dgemm src/dgemm.cpp)
+add_executable(sgemm src/sgemm.cpp)
 add_executable(dsyevd src/dsyevd.cpp)
 target_link_libraries(dgemm PUBLIC ${GPU_LIBRARIES})
+target_link_libraries(sgemm PUBLIC ${GPU_LIBRARIES})
 target_link_libraries(dsyevd PUBLIC ${GPU_LIBRARIES})
